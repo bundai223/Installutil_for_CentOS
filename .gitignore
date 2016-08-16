@@ -146,4 +146,4 @@ ENV/
 .ropeproject
 
 # repos
-rails4_template.rb
+*.rb
