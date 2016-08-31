@@ -17,7 +17,7 @@ def install_git():
     sudo("yum install -y curl-devel expat-devel gettext-devel openssl-devel zlib-devel perl-ExtUtils-MakeMaker")
 
     with cd("/tmp"):
-        sudo("wget https://www.kernel.org/pub/software/scm/git/git-2.9.0.tar.gz")
+        sudo("wget https://www.kernel.org/pub/software/scm/git/git-2.9.0.tar.xz")
         sudo("tar xf git-2.9.0.tar.xz")
         with cd("git-2.9.0"):
             sudo("./configure prefix=/usr/local")
@@ -28,7 +28,6 @@ def install_git():
 @task
 def install_mdns():
     sudo("yum -y install avahi nss-mdns")
-    sudo("service messagebus start")  # centos6
     sudo("service avahi-daemon start")
 
 
@@ -91,25 +90,18 @@ def install_mecab():
     sudo("yum makecache")
     sudo("yum install -y mecab mecab-ipadic")
 
+
 # CentOS7用
-# @task
-# def install_mysql():
-#     sudo("yum remove mariadb-libs")
-#     sudo("rm -rf /var/lib/mysql")
-#     sudo("yum localinstall http://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm")
-#
-#     sudo("yum -y install mysql-community-server")
-#     sudo("yum -y install mysql-devel")
-#     sudo("systemctl enable mysqld.service")  # centos7
-#     sudo("systemctl start mysqld.service")   # centos7
-#
-
-
 @task
 def install_mysql():
-    sudo("yum install -y mysql-devel mysql-server")
-    sudo("chkconfig mysqld on")
-    sudo("service mysqld start")
+    sudo("yum remove mariadb-libs")
+    sudo("rm -rf /var/lib/mysql")
+    sudo("yum localinstall http://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm")
+
+    sudo("yum -y install mysql-community-server")
+    sudo("yum -y install mysql-devel")
+    sudo("systemctl enable mysqld.service")  # centos7
+    sudo("systemctl start mysqld.service")   # centos7
 
 
 @task
@@ -135,10 +127,10 @@ def setup_locale():
 
 @task
 def install_all():
-    install_common()
-    install_mdns()
-    install_ruby()
-    install_rails()
+    # install_common()
+    # install_mdns()
+    # install_ruby()
+    # install_rails()
     install_mecab()
     install_mysql()
     install_nginx()
