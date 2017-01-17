@@ -1,24 +1,60 @@
 # -*- coding: utf-8 -*-
 from fabric.api import sudo, task, cd, put
+from fabric.contrib.files import exists
 
 
 @task
 def install_common():
     # sudo("yum -y install sqlite sqlite-devel")
     sudo("yum -y install curl-devel apr-devel apr-util-devel libffi-devel openssh openssl-devel readline-devel zlib-devel libcurl-devel")
-    sudo("yum -y install vim")
     sudo("sudo yum -y install ImageMagick ImageMagick-devel")
 
     install_git()
+    install_vim()
 
+
+@task
+def install_vim():
+    # sudo("yum -y install mercurial ncurses ncurses-devel")
+    sudo('yum -y groupinstall "Development Tools"')
+    sudo("yum -y install gettext ncurses-devel lua-devel python-devel ruby-deve")
+
+    with cd("/usr/src"):
+        if not exists("luajit-2.0"):
+            sudo("git clone http://luajit.org/git/luajit-2.0.git")
+        with cd("luajit-2.0"):
+            sudo("make")
+            sudo("make install")
+
+        if not exists("/usr/local/include/lua"):
+            sudo("ln -s /usr/local/include/luajit-2.0 /usr/local/include/lua")
+        if not exists("/usr/bin/luajit"):
+            sudo("ln -s /usr/local/bin/luajit /usr/bin/luajit")
+
+        if not exists("vim"):
+            sudo("git clone https://github.com/vim/vim.git")
+        with cd("vim"):
+            sudo("./configure\
+ --with-features=huge\
+ --disable-selinux\
+ --enable-multibyte\
+ --enable-pythoninterp\
+ --enable-rubyinterp\
+ --enable-luainterp\
+ --with-lua-prefix=/usr/local\
+ --with-luajit\
+ --enable-fontset\
+ --enable-fail-if-missing")
+            sudo("make")
 
 @task
 def install_git():
     sudo("yum install -y curl-devel expat-devel gettext-devel openssl-devel zlib-devel perl-ExtUtils-MakeMaker")
 
     with cd("/tmp"):
-        sudo("wget https://www.kernel.org/pub/software/scm/git/git-2.9.0.tar.gz")
-        sudo("tar xf git-2.9.0.tar.xz")
+        if not exists("git-2.9.0.tar.gz") and not exists("git-2.9.0"):
+          sudo("wget https://www.kernel.org/pub/software/scm/git/git-2.9.0.tar.gz")
+          sudo("tar xf git-2.9.0.tar.gz")
         with cd("git-2.9.0"):
             sudo("./configure prefix=/usr/local")
             sudo("make all")
