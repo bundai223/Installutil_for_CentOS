@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from fabric.api import sudo, task, cd, put
+from fabric.api import sudo, task, cd, put, env
 from fabric.contrib.files import exists
 
+env.use_ssh_config = True
 
 @task
 def install_common():
@@ -10,7 +11,6 @@ def install_common():
     sudo("sudo yum -y install ImageMagick ImageMagick-devel")
 
     install_git()
-    install_vim()
 
 
 @task
@@ -150,7 +150,7 @@ def install_mysql():
 
 @task
 def install_nginx():
-    sudo("sudo rpm -ivh http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm")
+    sudo("sudo rpm -ivh http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm", warn_only=True)
     sudo("sudo yum -y install nginx")
     sudo("chkconfig nginx on")
     sudo("service nginx start")
@@ -158,7 +158,7 @@ def install_nginx():
 
 @task
 def install_node():
-    sudo("rpm -ivh http://ftp.riken.jp/Linux/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm")
+    sudo("rpm -ivh http://ftp.riken.jp/Linux/fedora/epel/6/x86_64/epel-release-6-8.noarch.rpm", warn_only=True)
     sudo("yum -y install nodejs npm --enablerepo=epel")
     sudo("npm install -g bower")
 
@@ -179,4 +179,5 @@ def install_all():
     install_mysql()
     install_nginx()
     install_node()
+    install_vim()
     setup_locale()
