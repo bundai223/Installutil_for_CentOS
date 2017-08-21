@@ -17,7 +17,7 @@ def install_common():
 def install_vim():
     # sudo("yum -y install mercurial ncurses ncurses-devel")
     sudo('yum -y groupinstall "Development Tools"')
-    sudo("yum -y install gettext ncurses-devel lua-devel python-devel ruby-deve")
+    sudo("yum -y install gettext ncurses-devel lua-devel python-devel ruby-devel")
 
     with cd("/usr/src"):
         if not exists("luajit-2.0"):
@@ -52,10 +52,10 @@ def install_git():
     sudo("yum install -y curl-devel expat-devel gettext-devel openssl-devel zlib-devel perl-ExtUtils-MakeMaker")
 
     with cd("/tmp"):
-        if not exists("git-2.9.0.tar.gz") and not exists("git-2.9.0"):
-          sudo("wget https://www.kernel.org/pub/software/scm/git/git-2.9.0.tar.gz")
-          sudo("tar xf git-2.9.0.tar.gz")
-        with cd("git-2.9.0"):
+        if not exists("git-2.14.1.tar.gz") and not exists("git-2.14.1"):
+          sudo("wget https://www.kernel.org/pub/software/scm/git/git-2.14.1.tar.gz")
+          sudo("tar xf git-2.14.1.tar.gz")
+        with cd("git-2.14.1"):
             sudo("./configure prefix=/usr/local")
             sudo("make all")
             sudo("make install")
