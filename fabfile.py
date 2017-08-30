@@ -62,6 +62,26 @@ def install_git():
 
 
 @task
+def install_zsh():
+    sudo("yum -y install ncurses-devel")
+
+    version = '5.4.1'
+    tgz     = 'zsh-{version}.tar.gz'.format(**locals())
+    dir     = 'zsh-{version}'.format(**locals())
+    url     = 'http://sourceforge.net/projects/zsh/files/zsh/{version}/{tgz}/download'.format(**locals())
+
+    with cd("/tmp"):
+        if not exists(tgz):
+          sudo("wget {url} -O {tgz}".format(**locals()))
+        if not exists(dir):
+          sudo("tar xfz {tgz}".format(**locals()))
+        with cd(dir):
+            sudo("./configure prefix=/usr/local")
+            sudo("make")
+            sudo("make install")
+
+
+@task
 def install_mdns():
     sudo("yum -y install avahi nss-mdns")
     sudo("service messagebus start")  # centos6
