@@ -51,11 +51,17 @@ def install_vim():
 def install_git():
     sudo("yum install -y curl-devel expat-devel gettext-devel openssl-devel zlib-devel perl-ExtUtils-MakeMaker")
 
+    version = '2.14.1'
+    tgz     = 'git-{version}.tar.gz'.format(**locals())
+    dir     = 'git-{version}'.format(**locals())
+    url     = 'https://www.kernel.org/pub/software/scm/git/{tgz}'.format(**locals())
+
     with cd("/tmp"):
-        if not exists("git-2.14.1.tar.gz") and not exists("git-2.14.1"):
-          sudo("wget https://www.kernel.org/pub/software/scm/git/git-2.14.1.tar.gz")
-          sudo("tar xf git-2.14.1.tar.gz")
-        with cd("git-2.14.1"):
+        if not exists(tgz):
+          sudo("wget {url} -O {tgz}".format(**locals()))
+        if not exists(dir):
+          sudo("tar xf {tgz}".format(**locals()))
+        with cd(dir):
             sudo("./configure prefix=/usr/local")
             sudo("make all")
             sudo("make install")
@@ -69,6 +75,26 @@ def install_zsh():
     tgz     = 'zsh-{version}.tar.gz'.format(**locals())
     dir     = 'zsh-{version}'.format(**locals())
     url     = 'http://sourceforge.net/projects/zsh/files/zsh/{version}/{tgz}/download'.format(**locals())
+
+    with cd("/tmp"):
+        if not exists(tgz):
+          sudo("wget {url} -O {tgz}".format(**locals()))
+        if not exists(dir):
+          sudo("tar xfz {tgz}".format(**locals()))
+        with cd(dir):
+            sudo("./configure prefix=/usr/local")
+            sudo("make")
+            sudo("make install")
+
+
+@task
+def install_tmux():
+    sudo("yum -y install ncurses-devel libevent2-devel")
+
+    version = '2.5'
+    tgz     = 'tmux-{version}.tar.gz'.format(**locals())
+    dir     = 'tmux-{version}'.format(**locals())
+    url     = 'https://github.com/tmux/tmux/releases/download/{version}/{tgz}'.format(**locals())
 
     with cd("/tmp"):
         if not exists(tgz):
