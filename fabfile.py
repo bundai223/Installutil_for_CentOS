@@ -7,6 +7,7 @@ env.use_ssh_config = True
 @task
 def install_common():
     # sudo("yum -y install sqlite sqlite-devel")
+    sudo('yum -y groupinstall "Development Tools"')
     sudo("yum -y install curl-devel apr-devel apr-util-devel libffi-devel openssh openssl-devel readline-devel zlib-devel libcurl-devel")
     sudo("sudo yum -y install ImageMagick ImageMagick-devel")
 
@@ -16,7 +17,6 @@ def install_common():
 @task
 def install_vim():
     # sudo("yum -y install mercurial ncurses ncurses-devel")
-    sudo('yum -y groupinstall "Development Tools"')
     sudo("yum -y install gettext ncurses-devel lua-devel python-devel ruby-devel")
 
     with cd("/usr/src"):
@@ -125,8 +125,14 @@ def install_ruby():
 
     # rbenv
     with cd("/usr/local"):
-        sudo("git clone git://github.com/sstephenson/rbenv.git rbenv", warn_only=True)
-        sudo("mkdir rbenv/shims rbenv/versions rbenv/plugins", warn_only=True)
+        if not exists("rbenv"):
+            sudo("git clone git://github.com/sstephenson/rbenv.git rbenv")
+        if not exists("rbenv/shims"):
+            sudo("mkdir rbenv/shims")
+        if not exists("rbenv/versions"):
+            sudo("rbenv/versions")
+        if not exists("rbenv/plugins"):
+            sudo("rbenv/plugins")
         put("./ruby/default-gems", "/usr/local/rbenv/", use_sudo=True)
         sudo("groupadd rbenv")
         sudo("chgrp -R rbenv rbenv")
@@ -136,12 +142,14 @@ def install_ruby():
 
     # ruby-build
     with cd("/usr/local/rbenv/plugins"):
-        sudo("git clone git://github.com/sstephenson/ruby-build.git ruby-build")
+        if not exists("ruby-build"):
+            sudo("git clone git://github.com/sstephenson/ruby-build.git ruby-build")
         sudo("chgrp -R rbenv ruby-build")
         sudo("chmod -R g+rwxs ruby-build")
 
         # rbenv-default-gems
-        sudo("git clone git://github.com/sstephenson/rbenv-default-gems.git rbenv-default-gems")
+        if not exists("rbenv-default-gems"):
+            sudo("git clone git://github.com/sstephenson/rbenv-default-gems.git rbenv-default-gems")
         sudo("chgrp -R rbenv rbenv-default-gems")
         sudo("chmod -R g+rwxs rbenv-default-gems")
 
